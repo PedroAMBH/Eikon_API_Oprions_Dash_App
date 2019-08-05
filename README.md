@@ -1,8 +1,8 @@
 ## Options EIKON API APP:
 
-This Project Aims To Explore The Possibility Of Doing Custom Application With The Eikon Data Api And Dash/Plotly. 
+This project aims to explore the possibility of doing custom application with the eikon data api and dash/plotly. 
 
-It An Opensource Project That Intends To Engage The Community Around The Refinitiv Apis. On The Future, I Intend To Improve The Current Code That Is Now On Version 0.1v. The Application Is 100% Made In Python
+It an opensource project that intends to engage the community around the refinitiv apis. On the future, i intend to improve the current code that is now on version 0.1v. The application is 100% made in python
 
 ### Requirements:
 - Eikon installed on the computer.
