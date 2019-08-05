@@ -59,7 +59,7 @@ KeyLog=dbc.Card(
                         dbc.Input(id='input-box0',
                                     placeholder='Enter a key...', 
                                     type='text',size=180,
-                                    value='b62c1ab67f2d457980440a42dbe099dd868d6a29')),
+                                    value='xxxxxxxxxxxxxxxxxxxxxxxxxxxx')),
                         dbc.Col(
                         dbc.Button('Submit', 
                                     id='button0',
@@ -217,7 +217,7 @@ OptionsSelect=html.Div([
 
 TableM=dbc.Card(
             dbc.CardBody([
-                html.H5('Operações', className="card-title"),
+                html.H5('Options Strategy', className="card-title"),
                 html.Div(id='output-tabela-select', 
                                     style={'display': 'none'},
                                     ),
@@ -877,7 +877,7 @@ def CalcNetChart(row_ids,data,children,value):
             prob=round(sum(pay.values>0)/len(Distrib)*100,2)
             print(prob)
 
-            return [fig, html.H6(str(prob)+"%")]
+            return [fig, html.H6("Profit probability: "+str(prob)+"%")]
 
         else:
             fig = go.FigureWidget(make_subplots(shared_xaxes=True, specs=[[{"secondary_y": True}]],print_grid=False))
