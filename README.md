@@ -27,17 +27,20 @@ Run the code: OptionDash.py
 ## How to use it:
 
 After installing all the dependences you will be able to run the code from the terminal.
-<img src="/assets/cmd.jpeg" alt="Drawing" style="width: 500px">
+
+<img src="./assets/cmd.jpeg" alt="Drawing" style="width: 500px">
 
 
 It will automatically open a tab on your Browser:
 -	You need to paste the API key (from the API KEY GENERATOR) on the first text box, and submit.
 -	On the second text box you should paste the options Chain and submit, it will downloaded the options information from Eikon.
-<img src="/assets/1.jpeg" alt="Drawing" style="width: 500px">
+
+<img src="./assets/1.jpeg" alt="Drawing" style="width: 500px">
 
 On the ?Options filter? block:
 -	Select the maturity?s  you are entrusted in and the number of strikes around the spot price do you want to see and submit.
-<img src="/assets/2.jpeg" alt="Drawing" style="width: 500px">
+
+<img src="./assets/2.jpeg" alt="Drawing" style="width: 500px">
 
 ?	Each of the alternatives is a difference options, presenting the different strikes and maturity's. 
 
@@ -46,4 +49,4 @@ On the ?Options filter? block:
 
 -	By checking the rows on the Table you will be including the selected options to a strategy profit chart.
 
-<img src="/assets/3.jpeg" alt="Drawing" style="width: 500px">
+<img src="./assets/3.jpeg" alt="Drawing" style="width: 500px">
