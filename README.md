@@ -9,15 +9,15 @@ It an opensource project that intends to engage the community around the refinit
 - Python version 3.6x or greater.
 
 	Libraries:
-		dash==0.43.0
-		dash_table==3.7.0
-		dash_bootstrap_components==0.6.3
-		eikon==1.0.0
-		json==2.0.9
-		pandas==0.24.2
-		numpy==1.15.4
-		plotly==4.0.0
-		scipy==1.1.0
+		- dash==0.43.0
+		- dash_table==3.7.0
+		- dash_bootstrap_components==0.6.3
+		- eikon==1.0.0
+		- json==2.0.9
+		- pandas==0.24.2
+		- numpy==1.15.4
+		- plotly==4.0.0
+		- scipy==1.1.0
 
 
 ## How it Works:
