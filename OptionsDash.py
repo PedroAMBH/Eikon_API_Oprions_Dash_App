@@ -39,7 +39,7 @@ navbar = dbc.NavbarSimple(id='nav-bar',
             ],
         ),
     ],
-    brand="Refinitiv Eikon API - Options Dash",
+    brand="Refinitiv Eikon API - Options Dash (Alpha)",
     brand_href="https://community.developers.thomsonreuters.com",
     sticky="top",dark=True, color="#001eff",
 )
