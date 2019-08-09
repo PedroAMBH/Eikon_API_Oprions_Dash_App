@@ -59,7 +59,7 @@ KeyLog=dbc.Card(
                         dbc.Input(id='input-box0',
                                     placeholder='Enter a key...', 
                                     type='text',size=180,
-                                    value='b62c1ab67f2d457980440a42dbe099dd868d6a29')),
+                                    value='')),
                         dbc.Col(
                         dbc.Button('Submit', 
                                     id='button0',
