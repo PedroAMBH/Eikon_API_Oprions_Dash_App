@@ -863,10 +863,10 @@ def CalcNetChart(row_ids,data,children,value):
                                         np.array(data['ImpVol'].values[j])/100,
                                         days[j])
                     
-                    if "C" in data["PUTCALLIND"].values[s]:
-                        temp=list((temp.ValorC.values-data['TRDPRC_1'].values[s])*data['Amount'].values[s])
+                    if "C" in data["type"].values[s]:
+                        temp=list((temp.ValorC.values-data['Price'].values[s])*data['Amount'].values[s])
                     else:
-                        temp=list((temp.ValorP.values-data['TRDPRC_1'].values[s])*data['Amount'].values[s])
+                        temp=list((temp.ValorP.values-data['Price'].values[s])*data['Amount'].values[s])
 
                     tempT.append(temp)
 
