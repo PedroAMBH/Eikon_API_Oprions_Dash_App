@@ -59,7 +59,7 @@ KeyLog=dbc.Card(
                         dbc.Input(id='input-box0',
                                     placeholder='Enter a key...', 
                                     type='text',size=180,
-                                    value='xxxxxxxxxxxxxxxxxxxxxxxxxxxx')),
+                                    value='b62c1ab67f2d457980440a42dbe099dd868d6a29')),
                         dbc.Col(
                         dbc.Button('Submit', 
                                     id='button0',
@@ -204,10 +204,9 @@ OptionsSelect=html.Div([
                                                         ),
                                                     ),
                                     ])),
-                                ]),                    
+                                ]),
                             ])
                         ),
-
                     id="collapse",
                 ),
             ]
@@ -308,10 +307,11 @@ def update_values(n_clicks, value):
     if (n_clicks!=None)&(value!=None):
         lista, err = ek.get_data(value,'RData')
         lista=lista.Instrument[~lista.Instrument.isnull()].values
-        optionsInfo, err = ek.get_data(list(lista),['TRADE_DATE','TRDPRC_1',"PUTCALLIND","EXPIR_DATE","STRIKE_PRC","BKGD_REF"])
+        optionsInfo, err = ek.get_data(list(lista),['TRADE_DATE','TRDPRC_1',"PUTCALLIND","EXPIR_DATE","STRIKE_PRC","IMP_VOLT","BKGD_REF"])
         optionsInfo=optionsInfo[optionsInfo.STRIKE_PRC.notnull()]
         optionsInfo=optionsInfo[optionsInfo.EXPIR_DATE.astype('datetime64')>=optionsInfo.TRADE_DATE.astype('datetime64').max()]
         spot, err = ek.get_data([optionsInfo.BKGD_REF.values[0]]+['BRSELICD=CBBR'],['TRADE_DATE','TRDPRC_1'])
+        # print(optionsInfo.head())
         optionsInfo['Delta']=spot.TRDPRC_1.values[0]-optionsInfo.STRIKE_PRC
         optionsInfo_C=optionsInfo[optionsInfo.PUTCALLIND=='CALL']
         optionsInfo_P=optionsInfo[optionsInfo.PUTCALLIND!='CALL']
@@ -371,7 +371,7 @@ def UppCh(n_clicks):
                     dbc.Col(
                         dt.DataTable(
                             id='table',
-                            columns=[{"name": i, "id": i} for i in ["Instrument","Day","Price","type","Maturity","Strike","Amount"]],
+                            columns=[{"name": i, "id": i} for i in ["Instrument","Day","Price","type","Maturity","Strike","Amount","ImpVol"]],
                             data=pd.DataFrame([],columns=["Instrument","Day","Price","type","Maturity","Strike","Amount"]).to_dict('records'),
                             editable=True,
                             row_selectable="multi",
@@ -380,12 +380,12 @@ def UppCh(n_clicks):
                             selected_rows=[],
                             style_cell={'minHeight': '30px', 'height': '30px', 'maxHeight': '30px',
                                         'whiteSpace': 'normal'},
-                        ),width=6),
+                        ),width=7),
 
                     dbc.Col(
                         dt.DataTable(
                             id='table1',
-                            columns=[{"name": i, "id": i} for i in ['Financial','ImpVol','Delta','Gamma','Vega','Theta','Rho']],
+                            columns=[{"name": i, "id": i} for i in ['Financial','Delta','Gamma','Vega','Theta','Rho']],
                             data=pd.DataFrame([],columns=['Financial','ImpVol','Delta','Gamma','Vega','Theta','Rho']).to_dict('records'),
                             style_cell={'minHeight': '30px', 'height': '30px', 'maxHeight': '30px',
                                         'minWidth': '60px', 'width': '60px', 'maxWidth': '60px',
@@ -657,8 +657,8 @@ def TableUpdate(*va):
         optionsInfo_P=pd.DataFrame(json.loads(json.loads(str(children))['optionsInfo_P']))
         optionsInfo=pd.DataFrame(json.loads(json.loads(str(children))['optionsInfo']))
 
-        tabc=optionsInfo_C[optionsInfo_C.Instrument.isin(ListOP)][["Instrument","TRADE_DATE","TRDPRC_1","PUTCALLIND","EXPIR_DATE","STRIKE_PRC"]]
-        tabp=optionsInfo_P[optionsInfo_P.Instrument.isin(ListOP)][["Instrument","TRADE_DATE","TRDPRC_1","PUTCALLIND","EXPIR_DATE","STRIKE_PRC"]]
+        tabc=optionsInfo_C[optionsInfo_C.Instrument.isin(ListOP)][["Instrument","TRADE_DATE","TRDPRC_1","PUTCALLIND","EXPIR_DATE","STRIKE_PRC","IMP_VOLT"]]
+        tabp=optionsInfo_P[optionsInfo_P.Instrument.isin(ListOP)][["Instrument","TRADE_DATE","TRDPRC_1","PUTCALLIND","EXPIR_DATE","STRIKE_PRC","IMP_VOLT"]]
 
         tabc=tabc.sort_values('STRIKE_PRC')
         tabp=tabp.sort_values('STRIKE_PRC')
@@ -669,9 +669,7 @@ def TableUpdate(*va):
 
         tab["Amount"]=0
 
-        tab.columns=["Instrument","Day","Price","type","Maturity","Strike","Amount"]
-        print(tab)
-
+        tab.columns=["Instrument","Day","Price","type","Maturity","Strike","ImpVol","Amount"]
         return ([tab.to_dict('rows'),[]])
 
     else:
@@ -697,6 +695,7 @@ def TableUpdate1(data_timestamp,data,children):
             data['Amount']=data['Amount'].astype(float)
             data['Price']=data['Price'].astype(float)
             data['Strike']=data['Strike'].astype(float)
+            data['ImpVol']=data['ImpVol'].astype(float)
             data["Day"]=pd.to_datetime(data["Day"])
             data["Maturity"]=pd.to_datetime(data["Maturity"])
             data["Financial"] = data['Amount']*data['Price']
@@ -707,14 +706,14 @@ def TableUpdate1(data_timestamp,data,children):
 
             days=(data.apply(lambda row: businessDuration(startdate=row['Day'],enddate=row['Maturity'],unit='day'), axis=1)).values
 
-            ImpyVola=[round(Func.ImpliedVola(spot[spot["Instrument"]!="BRSELICD=CBBR"].TRDPRC_1.values[0].astype(float),
-                        data["Strike"].values[j].astype(float),
-                        spot[spot["Instrument"]=="BRSELICD=CBBR"].TRDPRC_1.values[0].astype(float)/100,
-                        .70,
-                        data["Price"].values[j].astype(float),
-                        days[j],
-                        data["type"],a=-12.0, b=12.0, xtol=1e-8)*100,2) for j in range(len(data))]
-
+            # ImpyVola=[round(Func.ImpliedVola(spot[spot["Instrument"]!="BRSELICD=CBBR"].TRDPRC_1.values[0].astype(float),
+            #             data["Strike"].values[j].astype(float),
+            #             spot[spot["Instrument"]=="BRSELICD=CBBR"].TRDPRC_1.values[0].astype(float)/100,
+            #             .70,
+            #             data["Price"].values[j].astype(float),
+            #             days[j],
+            #             data["type"],a=-12.0, b=12.0, xtol=1e-8)*100,2) for j in range(len(data))]
+            ImpyVola=data['ImpVol'].values
             GREEKS=Func.OpitionsPrice(spot[spot["Instrument"]!="BRSELICD=CBBR"].TRDPRC_1.values[0].astype(float),
                                         data["Strike"].values.astype(float),
                                         spot[spot["Instrument"]=="BRSELICD=CBBR"].TRDPRC_1.values[0].astype(float)/100,
@@ -738,7 +737,7 @@ def TableUpdate1(data_timestamp,data,children):
             data["Vega"]=data.Vega.values
             data["Theta"]=data.Theta.values
             data["Rho"]=data.Rho.values
-            return (data[['Financial','ImpVol','Delta','Gamma','Vega','Theta','Rho']].to_dict('records'))
+            return (data[['Financial','Delta','Gamma','Vega','Theta','Rho']].to_dict('records'))
 
         else:
             return []
@@ -809,14 +808,15 @@ def CalcNetChart(row_ids,data,children,value):
             vola.columns=['Instrument',5,10,20,30,60,90]
             vola[[5,10,20,30,60,90]]=vola[[5,10,20,30,60,90]]/100
             days=list(np.unique(days))
-
             dists=[]
+            vollist=[]
             for d in days:
                 y_interp = scipy.interpolate.interp1d(vola.columns[1:].astype(float),vola.T[0].values[1:].astype(float))
                 volaV=y_interp(d)
                 Distrib=1-np.random.normal(0,(volaV/(252**0.5)*(d**0.5)), size=5000)
                 Distrib=Distrib*ssp
 
+                vollist.append(volaV)
                 dists.append(Distrib)
 
             Price=dists[pd.DataFrame(dists).max(1).argmax()]
@@ -849,34 +849,62 @@ def CalcNetChart(row_ids,data,children,value):
 
             pay=pd.DataFrame(net)
             pay.columns=Price
+            pays=pay
+            # print(pays.values)
             pay=pay.sum()
 
-            pay=pd.DataFrame(net)
-            pay.columns=Price
-            pay=pay.sum()
+            tempTT=[]
+            for j in range(len(set(days))):
+                tempT=[]
+                for s in range(len(data["Strike"])):
+                    temp=Func.OpitionsPrice(Price,
+                                        data["Strike"].values.astype(float)[s],
+                                        spot[spot["Instrument"]=="BRSELICD=CBBR"].TRDPRC_1.values[0].astype(float)/100,
+                                        np.array(data['ImpVol'].values[j])/100,
+                                        days[j])
+                    
+                    if "C" in data["PUTCALLIND"].values[s]:
+                        temp=list((temp.ValorC.values-data['TRDPRC_1'].values[s])*data['Amount'].values[s])
+                    else:
+                        temp=list((temp.ValorP.values-data['TRDPRC_1'].values[s])*data['Amount'].values[s])
+
+                    tempT.append(temp)
+
+                tempTT.append(tempT)
+
 
             fig = go.FigureWidget(make_subplots(shared_xaxes=True, specs=[[{"secondary_y": True}]],print_grid=False))
-
-            trace1 = go.Scatter(name="Payoff",x=pay.index,
-                                   y=pay.values,xaxis = 'x1',yaxis = 'y2',
-                                   mode='lines',fill='tozeroy')
-
             trace3 = go.Scatter(name="0 line",x=pay.index,
                                    y=np.array([0 for i in Distrib]),
                                    xaxis = 'x1',yaxis = 'y2',
                                    line = dict(color='black', width=2, dash='dash'))
-
-            fig.add_trace(trace1, secondary_y=False)
             fig.add_trace(trace3, secondary_y=False)
+
+            trace1 = go.Scatter(name="Payoff",x=pay.index,
+                                   y=pay.values,xaxis = 'x1',yaxis = 'y2',
+                                   mode='lines',fill='tozeroy')
+            fig.add_trace(trace1, secondary_y=False)
+
+            for i in range(len(tempTT)):
+                trace5 = go.Scatter(name="Price - "+str(days[i])+' Days',x=pay.index,
+                                       y=pd.DataFrame(tempTT[i]).sum().values,
+                                       xaxis = 'x1',yaxis = 'y2',
+                                       mode='lines')
+                fig.add_trace(trace5, secondary_y=False)
+
+
+            for lin,i in zip(pays.values,pays.index):
+                trace4 = go.Scatter(name=data.Instrument.values[i],x=pay.index,
+                                       y=lin,xaxis = 'x1',yaxis = 'y2',
+                                       line = dict(width=2, dash='dash'))
+                fig.add_trace(trace4, secondary_y=False)
+
 
             for i,j in zip(days,dists):
                 trace2 = ff.create_distplot([j],[str(i)+" Days - Probabilidade"], bin_size=.5,curve_type='normal',show_hist=False,show_rug=False)
                 fig.add_trace(trace2['data'][0], secondary_y=True)
 
-
             prob=round(sum(pay.values>0)/len(Distrib)*100,2)
-            print(prob)
-
             return [fig, html.H6("Profit probability: "+str(prob)+"%")]
 
         else:

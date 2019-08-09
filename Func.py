@@ -75,7 +75,9 @@ def OpitionsPrice(S, K, R, D,T):
             "ThetaP":ThetaP,
             "RhoP": RhoP,
             "EtasP": EtasP})
-    
+
+
+
 def OpitionsPriceImplied(base,x):
     S=base["CLOSE"+str("" if (x-1)==0 else (x-1))+"_ATIVO"].values
     K=base["STRIKE_PRC"].values
