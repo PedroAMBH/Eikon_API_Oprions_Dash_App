@@ -34,13 +34,13 @@ navbar = dbc.NavbarSimple(id='nav-bar',
             in_navbar=True,
             label="Links",
             children=[
-                dbc.DropdownMenuItem("Git"),
-                dbc.DropdownMenuItem("linkedin",href='https://www.linkedin.com/in/pedroalexandremoura/?locale=en_US'),
+                dbc.DropdownMenuItem("Git",href='https://github.com/PedroAMBH/Eikon_API_Oprions_Dash_App'),
+                dbc.DropdownMenuItem("Linkedin",href='https://www.linkedin.com/in/pedroalexandremoura/?locale=en_US'),
             ],
         ),
     ],
     brand="Refinitiv Eikon API - Options Dash",
-    brand_href="https://www.refinitiv.com",
+    brand_href="https://community.developers.thomsonreuters.com",
     sticky="top",dark=True, color="#001eff",
 )
 
