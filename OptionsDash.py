@@ -410,6 +410,7 @@ def DropD(children,style):
     lldate=list(set(optionsInfo.EXPIR_DATE.values))
     lldate.sort()
     DropD=[{"label":i,"value":i} for i in lldate]
+    # print(DropD)
     return DropD
 
 
